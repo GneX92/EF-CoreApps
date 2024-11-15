@@ -51,6 +51,7 @@ static Warehouse ReadFile()
 
         Product p = new()
         {
+            ProductID = int.Parse( values [ 0 ] ) ,
             Bezeichnung = values [ 1 ] ,
             IstBestand = int.Parse( values [ 2 ] ) ,
             Höchstbestand = int.Parse( values [ 3 ] ) ,

@@ -21,7 +21,7 @@ public class DatabaseContext : DbContext
     protected override void OnConfiguring( DbContextOptionsBuilder optionsBuilder )
     {
         optionsBuilder.UseLazyLoadingProxies()
-                      .UseSqlServer( @"Server=.\SQLEXPRESS;Database=WarehouseDB;Trusted_Connection=True;Encrypt=False" );
+                      .UseSqlServer( @"Server=.\SQLEXPRESS;Database=Warehouse3DB;Trusted_Connection=True;MultipleActiveResultSets=True;Encrypt=False" );
     }
 
     protected override void OnModelCreating( ModelBuilder modelBuilder )
