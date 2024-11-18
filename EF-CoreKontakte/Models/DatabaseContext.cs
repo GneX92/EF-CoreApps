@@ -3,13 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace EF_CoreKontakte.Models;
 
 public class DatabaseContext : DbContext
 {
-    private DbSet<Kontakt>? contacts;
+    public DbSet<Kontakt>? Kontakte {  get; set; }
 
     public DatabaseContext()
     {
@@ -26,4 +27,6 @@ public class DatabaseContext : DbContext
     {
         modelBuilder.Entity<Kontakt>().ToTable( "Contact" );
     }
+
+    public async Task<List<Kontakt>> GetKontakteAsync() => await Kontakte.ToListAsync();
 }

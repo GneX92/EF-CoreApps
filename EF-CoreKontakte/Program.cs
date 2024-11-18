@@ -1,23 +1,43 @@
 ﻿using EF_CoreKontakte.Models;
 
-do
+namespace EF_CoreKontakte
 {
-    Console.Clear();
-    Console.WriteLine( "[1] Kontakt hinzufügen" );
-    Console.WriteLine( "[2] Kontakt bearbeiten" );
-    Console.WriteLine( "[3] Kontakte anzeigen" );
-    Console.WriteLine( "<ESC> Beenden" );
-
-    var choice = Console.ReadKey( true ).Key;
-
-    switch ( choice )
+    public static class Program
     {
-        case ConsoleKey.D1:
+        public static DatabaseContext ctx = new();
 
-        case ConsoleKey.D2:
+        static async Task Main( string [] args )
+        {
 
-        case ConsoleKey.D3:
+            do 
+            {
+                Console.Clear();
+                Console.WriteLine( "[1] Kontakt hinzufügen" );
+                Console.WriteLine( "[2] Kontakt bearbeiten" );
+                Console.WriteLine( "[3] Kontakte anzeigen" );
+                Console.WriteLine( "<ESC> Beenden" );
 
-        case ConsoleKey.Escape
+                var choice = Console.ReadKey( true ).Key;
+
+                switch ( choice )
+                {
+                    case ConsoleKey.D1:
+                        await InputForm.NewContact(ctx);
+                        break;
+                    case ConsoleKey.D2:
+                        // Not finished yet
+                        break;
+                    case ConsoleKey.D3:
+                        await InputForm.ShowContacts( ctx );
+                        break;
+                    case ConsoleKey.Escape:
+                        Environment.Exit( 0 );
+                        break;
+                    default:
+                        break;
+                }
+
+            } while ( true );
+        }         
     }
-} while ( true );
+}

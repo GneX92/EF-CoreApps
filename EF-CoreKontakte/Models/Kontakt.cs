@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -9,6 +10,7 @@ namespace EF_CoreKontakte.Models;
 
 public class Kontakt
 {
+    [Key()]
     public int ID { get; set; }
 
     public string? FirstName { get; set; }
@@ -21,4 +23,9 @@ public class Kontakt
 
     [JsonPropertyName( "post code" )]
     public string? City { get; set; }
+
+    public override string ToString()
+    {
+        return $"{LastName}, {FirstName} {Mail, 20} {ZipCode, 20} {City, 20}";
+    }
 }
