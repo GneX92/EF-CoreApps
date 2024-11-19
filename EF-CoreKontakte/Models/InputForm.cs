@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Json;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using EF_CoreKontakte;
+using Microsoft.Identity.Client;
 
 namespace EF_CoreKontakte.Models;
 
@@ -20,10 +22,10 @@ public static class InputForm
         {
             Kontakt k = new();
 
-            k.FirstName = ParseField( k.FirstName );
-            k.LastName = ParseField( k.LastName );
-            k.Mail = ParseMail();
-            k.ZipCode = ParseField( k.ZipCode );
+            k.FirstName = ParseField( k.FirstName , "Firstname" );
+            k.LastName = ParseField( k.LastName , "Lastname" );
+            k.Mail = ParseMail(k.Mail , "E-Mail" );
+            k.ZipCode = ParseField( k.ZipCode , "ZIP Code" );
             k.City = await GetCityFromZipCode( k.ZipCode );
             ctx.Kontakte?.Add( k );
             await ctx.SaveChangesAsync();
@@ -35,19 +37,18 @@ public static class InputForm
         }
     }
 
-    public static string ParseField( string k )
+    public static string ParseField( string? content, string prompt )
     {
         string? s;
 
         while ( true )
         {
-            Console.Clear();
-            Console.Write( $"{nameof( k )}: " );
-            s = Console.ReadLine();
+            Console.Clear();            
+            s = ReadLine.Read( $"{prompt}: " , content );
 
             if ( string.IsNullOrWhiteSpace( s ) )
             {
-                Console.WriteLine( $"Please enter a {nameof( k )}" );
+                Console.WriteLine( $"Please enter a {prompt}" );
                 Console.WriteLine( "<Press Any Key>" );
                 Console.ReadKey();
                 continue;
@@ -57,11 +58,11 @@ public static class InputForm
         }
 
         var arr = s.Split( ' ' );
-        k = arr [ 0 ].Trim();
-        return k;
+        s = arr [ 0 ].Trim();
+        return s;
     }
 
-    public static string ParseMail()
+    public static string ParseMail( string? content , string prompt )
     {
         string? s;
         string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
@@ -69,9 +70,7 @@ public static class InputForm
         while ( true )
         {
             Console.Clear();
-            Console.WriteLine();
-            Console.Write( $"E-Mail: " );
-            s = Console.ReadLine();
+            s = ReadLine.Read( $"{prompt}: " , content );
 
             if ( string.IsNullOrWhiteSpace( s ) )
             {
@@ -97,7 +96,7 @@ public static class InputForm
         return s;
     }
 
-    public static string ParseZip()
+    public static string ParseZip( string? content , string prompt )
     {
         string? s;
         string pattern = @"^\d{5}$";
@@ -105,8 +104,7 @@ public static class InputForm
         while ( true )
         {
             Console.Clear();
-            Console.Write( $"ZIP Code: " );
-            s = Console.ReadLine();
+            s = ReadLine.Read( $"{prompt}: " , content );
 
             if ( string.IsNullOrWhiteSpace( s ) )
             {
@@ -170,14 +168,20 @@ public static class InputForm
     {
         var contacts = await ctx.GetKontakteAsync();
 
+        Console.Clear();
+
+        Console.WriteLine( string.Format( "{0,-20} {1,-20} {2,-30} {3,-10} {4,-20}" ,
+                                          "Last Name" , "First Name" , "Email" , "Zip Code" , "City" ) );
+        Console.WriteLine( new string( '-' , 100 ) );
+
         foreach ( var contact in contacts )
             Console.WriteLine( contact );
     }
 
-    // Not finished
     public static async Task UpdateContacts( DatabaseContext ctx )
     {
         int id;
+
         while ( true )
         {
             Console.Clear();
@@ -203,15 +207,18 @@ public static class InputForm
         }
 
         Kontakt? k = ctx.Kontakte.First( c => c.ID == id );
+
         Console.Clear();
-        k.FirstName = ReadLine.Read( "Firstname: " , k.FirstName );
-        k.LastName = ReadLine.Read( "Lastname: " , k.LastName );
-        k.Mail = ReadLine.Read( "E-Mail:" , k.FirstName );
-        Console.WriteLine();
-        Console.WriteLine();
+
+        k.FirstName = ParseField( k.FirstName , "Firstname" );
+        k.LastName = ParseField( k.LastName , "Lastname" );
+        k.Mail = ParseMail( k.Mail , "E-Mail" );
+        k.ZipCode = ParseField( k.ZipCode , "ZIP Code" );
+        k.City = await GetCityFromZipCode( k.ZipCode );
+
         Console.ReadLine();
 
         ctx.Update( k );
-        ctx.SaveChanges();
+        await ctx.SaveChangesAsync();
     }
 }

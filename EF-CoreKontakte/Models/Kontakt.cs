@@ -26,6 +26,13 @@ public class Kontakt
 
     public override string ToString()
     {
-        return $"{LastName}, {FirstName} {Mail, 20} {ZipCode, 20} {City, 20}";
+        const string s = "N/A";
+
+        return string.Format( "{0, -20} {1, -20} {2, -30} {3, -10} {4, -20}" ,
+            LastName ?? s ,
+            FirstName ?? s ,
+            Mail ?? s ,
+            ZipCode ?? s ,
+            City ?? s );
     }
 }
